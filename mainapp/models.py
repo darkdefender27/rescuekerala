@@ -118,6 +118,10 @@ class Request(models.Model):
             out += "\nOther Needs :\n {}".format(self.needothers)
         return out
 
+    class Meta:
+        verbose_name = 'Relief: Supply Requiement'
+        verbose_name_plural = 'Relief: Supply Requirements'
+
     def __str__(self):
         return self.get_district_display() + ' ' + self.location
 
@@ -139,6 +143,10 @@ class Volunteer(models.Model):
     is_spoc = models.BooleanField(default=False, verbose_name="Is point of contact")
     joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Volunteer: Individual'
+        verbose_name_plural = 'Volunteers: Individuals'
 
     def __str__(self):
         return self.name
@@ -166,6 +174,10 @@ class NGO(models.Model):
     is_spoc = models.BooleanField(default=False, verbose_name="Is point of contact")
     joined = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = 'Volunteer: NGO'
+        verbose_name_plural = 'Volunteers: NGOs'
+
     def __str__(self):
         return self.name
 
@@ -186,6 +198,10 @@ class Contributor(models.Model):
         default = 'new'
     )
 
+    class Meta:
+        verbose_name = 'Contributor: Donation'
+        verbose_name_plural = 'Contributors: Donations'
+
     def __str__(self):
         return self.name + ' ' + self.get_district_display()
 
@@ -200,6 +216,10 @@ class DistrictManager(models.Model):
     phone = models.CharField(max_length=11, verbose_name="Phone - ഫോണ്‍ നമ്പര്‍")
     email = models.CharField(max_length=100, verbose_name="Email - ഇമെയിൽ")
 
+    class Meta:
+        verbose_name = 'District: Manager'
+        verbose_name_plural = 'District: Managers'
+
     def __str__(self):
         return self.name + ' ' + self.get_district_display()
 
@@ -210,6 +230,10 @@ class DistrictNeed(models.Model):
     )
     needs = models.TextField(verbose_name="Items required")
     cnandpts = models.TextField(verbose_name="Contacts and collection points") #contacts and collection points
+
+    class Meta:
+        verbose_name = 'District: Need'
+        verbose_name_plural = 'District: Needs'
 
     def __str__(self):
         return self.get_district_display()
@@ -223,6 +247,10 @@ class DistrictCollection(models.Model):
     collection = models.TextField(
         verbose_name="Details of collected items"
     )
+
+    class Meta:
+        verbose_name = 'District: Collection'
+        verbose_name_plural = 'District: Collections'
 
 class RescueCamp(models.Model):
     verbose_name = 'Relief Camp'
@@ -238,7 +266,7 @@ class RescueCamp(models.Model):
     data_entry_user = models.ForeignKey(User,models.SET_NULL,blank=True,null=True,help_text="This camp's coordinator page will be visible only to this user")
     map_link = models.CharField(max_length=250, verbose_name='Map link',blank=True,null=True,help_text="Copy and paste the full Google Maps link")
     latlng = models.CharField(max_length=100, verbose_name='GPS Coordinates', blank=True,help_text="Comma separated latlng field. Leave blank if you don't know it")
-    
+
     total_males = models.IntegerField(null=True,blank=True,verbose_name="Number of Males")
     total_females = models.IntegerField(null=True,blank=True,verbose_name="Number of Females")
     total_infants = models.IntegerField(null=True,blank=True,verbose_name="Number of Infants (<2y)")
@@ -250,7 +278,9 @@ class RescueCamp(models.Model):
     other_req = models.TextField(blank=True,null=True,verbose_name="Other - മറ്റുള്ളവ")
 
     class Meta:
-        verbose_name = 'Relief Camp'
+        verbose_name = 'Relief: Camp'
+        verbose_name_plural = "Relief: Camps"
+
     def __str__(self):
         return self.name
 
@@ -274,6 +304,38 @@ class Person(models.Model):
     notes = models.TextField(max_length=500,null=True,blank=True,verbose_name='Notes - കുറിപ്പുകൾ')
     camped_at = models.ForeignKey(RescueCamp,models.CASCADE,blank=False,null=False,verbose_name='Camp Name - ക്യാമ്പിന്റെ പേര്')
     added_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def sex(self):
+        return {
+            0:'Male',
+            1:'Female',
+            2:'Others'
+        }.get(self.gender, 'Unknown')
+
+    @property
+    def district_name(self):
+        return {
+                'alp':'Alappuzha - ആലപ്പുഴ',
+                'ekm':'Ernakulam - എറണാകുളം',
+                'idk':'Idukki - ഇടുക്കി',
+                'knr':'Kannur - കണ്ണൂർ',
+                'ksr':'Kasaragod - കാസർഗോഡ്',
+                'kol':'Kollam - കൊല്ലം',
+                'ktm':'Kottayam - കോട്ടയം',
+                'koz':'Kozhikode - കോഴിക്കോട്',
+                'mpm':'Malappuram - മലപ്പുറം',
+                'pkd':'Palakkad - പാലക്കാട്',
+                'ptm':'Pathanamthitta - പത്തനംതിട്ട',
+                'tvm':'Thiruvananthapuram - തിരുവനന്തപുരം',
+                'tcr':'Thrissur - തൃശ്ശൂർ',
+                'wnd':'Wayanad - വയനാട്',
+                }.get(self.district, 'Unknown')
+
+    class Meta:
+        verbose_name = 'Relief: Refugee'
+        verbose_name_plural = "Relief: Refugees"
+
     def __str__(self):
         return self.name
 
@@ -290,6 +352,10 @@ class Announcements(models.Model):
         choices = announcement_types,
         verbose_name='Type'
     )
+
+    class Meta:
+        verbose_name = 'Announcement: News'
+        verbose_name_plural = 'Announcements: News'
 
     def __str__(self):
         return self.get_district_display()
