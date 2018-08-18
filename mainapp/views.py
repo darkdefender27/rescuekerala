@@ -123,6 +123,7 @@ class RequestFilter(django_filters.FilterSet):
         # fields = ['district', 'status', 'needwater', 'needfood', 'needcloth', 'needmed', 'needkit_util', 'needtoilet', 'needothers',]
 
         fields = {
+                    'status' : ['exact'],
                     'district' : ['exact'],
                     'requestee' : ['icontains'],
                     'requestee_phone' : ['exact'],
